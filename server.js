@@ -1,14 +1,23 @@
-var express = require("express");
+const express = require("express");
+const mongoose = require("mongoose");
 
-var app = express();
-var PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.static("client"));
+const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-require("./routes/htmlRoutes.js")(app);
+app.use(express.static("public"));
 
-app.listen(PORT, function() {
-  console.log(`Now listening on port: ${PORT}`);
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/budget", {
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
+
+// routes
+app.use(require("./routes/api.js"));
+
+app.listen(PORT, () => {
+  console.log(`App running on port ${PORT}!`);
 });
